@@ -17,9 +17,8 @@ end
 
 % Parameters
 max_pts       = 200;
-threshRANSAC  = 6;
-blendFrac     = 0.3;
 geometricBlur = false;
+threshRANSAC  = 6;
 verbose       = true;
 
 % Parsing images
@@ -81,8 +80,7 @@ for i = 1 : length(xArray)
     if all(mosaicedIm(yArray(i), xArray(i), :) == 0)
         mosaicedIm(yArray(i), xArray(i), :) = im2(ySrcArr(i), xSrcArr(i), :);
     else
-        mosaicedIm(yArray(i), xArray(i), :) = blendFrac * mosaicedIm(yArray(i), xArray(i), :) ...
-                                              + (1 - blendFrac) * im2(ySrcArr(i), xSrcArr(i), :);
+        mosaicedIm(yArray(i), xArray(i), :) = im2(ySrcArr(i), xSrcArr(i), :);
     end
 end
 mosaicedIm = im2uint8(mosaicedIm);

@@ -50,7 +50,7 @@ for i = 1 : imgNum
         clf;
         imagesc(img_mosaic); axis image off;
         title(sprintf('Mosaiced Image in iteration %d', i));
-        fileString = fullfile(outputDir, ['matches', num2str(iter,'%02d')]);
+        fileString = fullfile(outputDir, ['stitched', num2str(i,'%02d')]);
         fig_save(h, fileString, 'png');
     end
 end
