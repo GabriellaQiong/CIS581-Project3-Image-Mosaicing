@@ -79,9 +79,9 @@ ySrcArr   = ySrcArr(effectIdx);
 % Stitiching the source image with blending
 for i = 1 : length(xArray)
     if all(mosaicedIm(yArray(i), xArray(i), :) == 0)
-        mosaicedIm(yArray(i), xArray(i), :) = im2(ySrcArr(i), xSrcArr(i), :);
+        mosaicedIm(yArray(i) + minDes(2) - 1, xArray(i) + minDes(1) - 1, :) = im2(ySrcArr(i), xSrcArr(i), :);
     else
-        mosaicedIm(yArray(i), xArray(i), :) = blendFrac * mosaicedIm(yArray(i), xArray(i), :) ...
+        mosaicedIm(yArray(i) + minDes(2) - 1, xArray(i) + minDes(1) - 1, :) = blendFrac * mosaicedIm(yArray(i), xArray(i), :) ...
                                               + (1 - blendFrac) * im2(ySrcArr(i), xSrcArr(i), :);
     end
 end
