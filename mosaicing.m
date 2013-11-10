@@ -2,7 +2,7 @@ function mosaicedIm = mosaicing(im1, im2, iter)
 % MOSIACING stitches two images into one
 
 % INPUT
-% im1, im2   = input rgb images
+% im1, im2   = input rgb images, im2 is the source and im1 is the destination
 % iter       = iteration number for multiple image stitching
 
 % OUTPUT
