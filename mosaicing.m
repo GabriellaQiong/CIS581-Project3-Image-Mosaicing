@@ -16,13 +16,15 @@ if nargin < 3
 end
 
 % Parameters
-max_pts       = 200;
-threshRANSAC  = 6;
-blendFrac     = 0.3;
+max_pts       = 100;
+threshRANSAC  = 10;
+blendFrac     = 0.0;
 geometricBlur = false;
 verbose       = true;
 
 % Parsing images
+im1 = double(im1);
+im2 = double(im2);
 I1  = rgb2gray(im1);
 I2  = rgb2gray(im2);
 
@@ -46,12 +48,12 @@ Y2 = y2(m(m ~= -1));
 X2 = x2(m(m ~= -1));
 
 % Estimate homography by RANSAC
-[H, ~] = ransac_est_homography(Y1, X1, Y2, X2, threshRANSAC, iter, verbose);
+[H, ~] = ransac_est_homography(Y1, X1, Y2, X2, threshRANSAC, iter, im1, im2, verbose);
 
 % Handle the bounds for transformed source image
 [yDes, xDes]       = size(I1);
 [ySrc, xSrc]       = size(I2);
-[xBound, yBound]   = apply_homography(H, [1; 1; xSrc; xSrc], [1: ySrc; 1; ySrc]);
+[xBound, yBound]   = apply_homography(H, [1; 1; xSrc; xSrc], [1; ySrc; 1; ySrc]);
 minBound           = round(min([xBound, yBound], [], 1));
 maxBound           = round(max([xBound, yBound], [], 1));
 [xMatrix, yMatrix] = meshgrid(minBound(1) : maxBound(1), minBound(2) : maxBound(2));
@@ -62,8 +64,8 @@ xSrcArr            = round(xSrcArr);
 ySrcArr            = round(ySrcArr);
 
 % Handle bounds for stitched image
-minMosaic   = min([minBound, [1 1]'], [], 2);
-maxMosaic   = min([maxBound, [xDes, yDes]'], [], 2);
+minMosaic   = min([minBound; [1 1]], [], 1);
+maxMosaic   = max([maxBound; [xDes, yDes]], [], 1);
 rangeMosaic = maxMosaic - minMosaic + 1;
 mosaicedIm  = zeros(rangeMosaic(2), rangeMosaic(1), 3);
 minDes      = 1 - (minMosaic ~= 1) .* minMosaic;

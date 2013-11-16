@@ -13,11 +13,10 @@ function m = feat_match(p1,p2)
 
 % Initialize
 n1     = size(p1, 2);
-n2     = size(p2, 2);
 m      = -ones(n1, 1);
 thresh = 0.5;
 
-for i = 1 : n2
+for i = 1 : n1
     % Compute SSD between all pairs of descriptors
     SSD = sum(bsxfun(@minus, p1(:, i), p2).^2, 1);
     % Find the 2 nearest neighbors

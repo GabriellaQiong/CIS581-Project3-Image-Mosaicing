@@ -13,6 +13,8 @@ function [y, x, rmax] = anms(cimg, max_pts)
 % Nov. 9th, 2013
 
 % Find the corners indices and their coordinates
+corners     = imregionalmax(cimg);
+cimg        = corners.*cimg;
 cornerIdx   = find(cimg);
 [y, x]      = ind2sub(size(cimg), cornerIdx);
 cornerCoord = [y, x];

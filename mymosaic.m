@@ -24,7 +24,7 @@ imgNum       = numel(img_input);
 centerImgIdx = ceil(imgNum / 2);
 
 if verbose
-    h = figure(1);
+    h = figure(2);
     p = mfilename('fullpath');
     funcDir = fileparts(p);
     outputDir = fullfile(funcDir, '/results');
@@ -39,6 +39,7 @@ end
 img_mosaic = img_input{centerImgIdx};
 
 for i = 1 : imgNum
+    fprintf('Processing image %d ... \n', i);
     if i <= centerImgIdx - 1
         img_mosaic = mosaicing(img_mosaic, img_input{centerImgIdx - i}, i); 
     elseif i > centerImgIdx

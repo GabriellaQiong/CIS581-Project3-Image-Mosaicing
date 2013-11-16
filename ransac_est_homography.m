@@ -1,4 +1,4 @@
-function [H, inlier_ind] = ransac_est_homography(y1, x1, y2, x2, thresh, iter, verbose)
+function [H, inlier_ind] = ransac_est_homography(y1, x1, y2, x2, thresh, iter, im1, im2, verbose)
 % RANSAC_EST_HOMOGRAPHY estimates the homography between two corresponding
 % feature points through RANSAC. im2 is the source and im1 is the destination.
 
@@ -14,7 +14,7 @@ function [H, inlier_ind] = ransac_est_homography(y1, x1, y2, x2, thresh, iter, v
 % Written by Qiong Wang at University of Pennsylvania
 % Nov. 9th, 2013
 
-if nargin < 3
+if nargin < 9
    verbose = false; 
 end
 
@@ -34,7 +34,7 @@ for t = 1 : roundNum
     
     % Refine the transform estimate
     [x1Est, y1Est] = apply_homography(H{t}, x2, y2);
-    ok{t} = ((x1 - x1Est).^2 + (y1 - y1Est).^2) > thresh^2;
+    ok{t} = ((x1 - x1Est).^2 + (y1 - y1Est).^2) <= thresh^2;
     score(t) = sum(ok{t}) ;
 end
 
@@ -57,17 +57,17 @@ clf;
 
 % Original Matches
 subplot(2,1,1);
-imagesc([padarray(im1,dh1,'post') padarray(im2,dh2,'post')]);
+imshow([padarray(im1,dh1,'post') padarray(im2,dh2,'post')]);
 delta = size(im1,2);
-line([x1; x2 + delta], [y1; y2]);
+line([x1'; x2' + delta], [y1'; y2']);
 title(sprintf('%d Original matches', N));
 axis image off;
 
 % Inlier Matches
 subplot(2,1,2);
-imagesc([padarray(im1,dh1,'post') padarray(im2,dh2,'post')]);
+imshow([padarray(im1,dh1,'post') padarray(im2,dh2,'post')]);
 delta = size(im1,2);
-line([x1(inlier_ind); x2(inlier_ind) + delta], [y1(inlier_ind); y2(inlier_ind)]);
+line([x1(inlier_ind)'; x2(inlier_ind)' + delta], [y1(inlier_ind)'; y2(inlier_ind)']);
 title(sprintf('%d (%.2f%%) inliner matches out of %d', sum(ok), 100*sum(ok)/N, N));
 axis image off;
 drawnow;
@@ -76,6 +76,9 @@ drawnow;
 p = mfilename('fullpath');
 funcDir = fileparts(p);
 outputDir = fullfile(funcDir, '/results');
+if ~exist(outputDir, 'dir')
+    mkdir(outputDir);
+end
 fileString = fullfile(outputDir, ['matches', num2str(iter,'%02d')]);
 fig_save(h, fileString, 'png');
 end
