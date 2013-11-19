@@ -19,7 +19,7 @@ if nargin < 4
 end
 n  = size(y, 1);
 p  = zeros(64, n);
-im = padarray(im, [20, 20]); 
+im = im2double(padarray(im, [20, 20])); 
 
 % Function handel to find image patch
 patch_img = @(x, y) im(y - 20 : y + 19, x - 20 : x + 19); 

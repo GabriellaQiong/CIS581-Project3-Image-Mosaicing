@@ -16,15 +16,13 @@ if nargin < 3
 end
 
 % Parameters
-max_pts       = 100;
-threshRANSAC  = 10;
-blendFrac     = 0.0;
+max_pts       = 400;
+threshRANSAC  = 5;
+blendFrac     = 0.5;
 geometricBlur = false;
 verbose       = true;
 
 % Parsing images
-im1 = double(im1);
-im2 = double(im2);
 I1  = rgb2gray(im1);
 I2  = rgb2gray(im2);
 
@@ -35,6 +33,14 @@ cimg2 = cornermetric(I2);
 % Adaptive non-maximum supression
 [y1, x1, ~] = anms(cimg1, max_pts);
 [y2, x2, ~] = anms(cimg2, max_pts);
+% figure()
+% imagesc(uint8(im1));
+% hold on;
+% plot(x1,y1,'or','MarkerSize',2,'MarkerFaceColor','r');
+% figure()
+% imagesc(uint8(im2));
+% hold on;
+% plot(x2,y2,'or','MarkerSize',2,'MarkerFaceColor','r');
 
 % Feature descriptors
 p1 = feat_desc(I1, y1, x1, geometricBlur);
@@ -67,7 +73,7 @@ ySrcArr            = round(ySrcArr);
 minMosaic   = min([minBound; [1 1]], [], 1);
 maxMosaic   = max([maxBound; [xDes, yDes]], [], 1);
 rangeMosaic = maxMosaic - minMosaic + 1;
-mosaicedIm  = zeros(rangeMosaic(2), rangeMosaic(1), 3);
+mosaicedIm  = uint8(zeros(rangeMosaic(2), rangeMosaic(1), 3));
 minDes      = 1 - (minMosaic ~= 1) .* minMosaic;
 mosaicedIm(minDes(2) : (minDes(2) + yDes - 1), minDes(1) : (minDes(1) + xDes - 1), :) = im1;
 
@@ -80,10 +86,10 @@ ySrcArr   = ySrcArr(effectIdx);
 
 % Stitiching the source image with blending
 for i = 1 : length(xArray)
-    if all(mosaicedIm(yArray(i), xArray(i), :) == 0)
-        mosaicedIm(yArray(i) + minDes(2) - 1, xArray(i) + minDes(1) - 1, :) = im2(ySrcArr(i), xSrcArr(i), :);
+    if all(mosaicedIm(yArray(i) - minMosaic(2) + 1, xArray(i) - minMosaic(1) + 1, :) == 0)
+        mosaicedIm(yArray(i) - minMosaic(2) + 1, xArray(i) - minMosaic(1) + 1, :) = im2(ySrcArr(i), xSrcArr(i), :);
     else
-        mosaicedIm(yArray(i) + minDes(2) - 1, xArray(i) + minDes(1) - 1, :) = blendFrac * mosaicedIm(yArray(i), xArray(i), :) ...
+        mosaicedIm(yArray(i) - minMosaic(2) + 1, xArray(i) - minMosaic(1) + 1, :) = blendFrac * mosaicedIm(yArray(i) - minMosaic(2) + 1, xArray(i) - minMosaic(1) + 1, :) ...
                                               + (1 - blendFrac) * im2(ySrcArr(i), xSrcArr(i), :);
     end
 end

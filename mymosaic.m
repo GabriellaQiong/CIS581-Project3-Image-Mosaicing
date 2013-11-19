@@ -24,7 +24,6 @@ imgNum       = numel(img_input);
 centerImgIdx = ceil(imgNum / 2);
 
 if verbose
-    h = figure(2);
     p = mfilename('fullpath');
     funcDir = fileparts(p);
     outputDir = fullfile(funcDir, '/results');
@@ -39,16 +38,17 @@ end
 img_mosaic = img_input{centerImgIdx};
 
 for i = 1 : imgNum
-    fprintf('Processing image %d ... \n', i);
     if i <= centerImgIdx - 1
-        img_mosaic = mosaicing(img_mosaic, img_input{centerImgIdx - i}, i); 
+        img_mosaic = mosaicing(img_mosaic, img_input{centerImgIdx - i}, i);
+        fprintf('Processing image %d ... \n', centerImgIdx - i);
     elseif i > centerImgIdx
         img_mosaic = mosaicing(img_mosaic, img_input{i}, i);
+        fprintf('Processing image %d ... \n', i);
     else
         continue;
     end
     if verbose
-        clf;
+        h = figure(2);
         imagesc(img_mosaic); axis image off;
         title(sprintf('Mosaiced Image in iteration %d', i));
         fileString = fullfile(outputDir, ['stitched', num2str(i,'%02d')]);

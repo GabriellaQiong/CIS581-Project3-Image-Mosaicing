@@ -14,26 +14,30 @@ function [y, x, rmax] = anms(cimg, max_pts)
 
 % Find the corners indices and their coordinates
 corners     = imregionalmax(cimg);
-cimg        = corners.*cimg;
+cimg        = bsxfun(@times, corners, cimg);
 cornerIdx   = find(cimg);
 [y, x]      = ind2sub(size(cimg), cornerIdx);
-cornerCoord = [y, x];
-cornerNum   = size(cornerCoord, 1);
+cornerNum   = size(y, 1);
 
 % Loop to find maximum radius
 radius = Inf(cornerNum, 1);
 for i = 1 : cornerNum
    for j = 1 : cornerNum
-       if cimg(cornerCoord(j, :)) <= cimg(cornerCoord(i, :))
-           continue
+       if (cimg(y(j), x(j)) > cimg(y(i), x(i)))
+           dist = (y(j) - y(i))^2 + (x(j) - x(i))^2;
+           if (dist < radius(i))
+              radius(i) = dist; 
+           end
        end
-       radius(i) = min(norm(cornerCoord(i, :) - cornerCoord(j, :)), radius(i));
    end
 end
 
 % Sort by radius in decreasing order to find max_pts corner points
 [radius, radiusIX] = sort(radius, 'descend');
+if max_pts > size(y,1)
+    max_pts = size(y,1);
+end
 y    = y(radiusIX(1 : max_pts));
 x    = x(radiusIX(1 : max_pts));
-rmax = radius(1 : max_pts);
+rmax = sqrt(radius(1 : max_pts));
 end

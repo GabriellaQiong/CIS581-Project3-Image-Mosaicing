@@ -14,7 +14,7 @@ function m = feat_match(p1,p2)
 % Initialize
 n1     = size(p1, 2);
 m      = -ones(n1, 1);
-thresh = 0.5;
+thresh = 0.75;
 
 for i = 1 : n1
     % Compute SSD between all pairs of descriptors

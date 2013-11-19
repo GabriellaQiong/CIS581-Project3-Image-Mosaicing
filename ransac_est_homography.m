@@ -6,6 +6,7 @@ function [H, inlier_ind] = ransac_est_homography(y1, x1, y2, x2, thresh, iter, i
 % y1,x1,y2,x2 = corresponding point coordinate vectors Nx1
 % thresh      = threshold on distance to see if transformed points agree
 % iter        = iteration number for multiple image stitching
+% im1, im2    = images
 
 % OUTPUT
 % H           = the 3x3 matrix computed in final step of RANSAC
@@ -20,7 +21,7 @@ end
 
 % Initialize
 N        = size(y1, 1);
-roundNum = 500;
+roundNum = 1000;
 score    = zeros(roundNum, 1);
 ok       = cell(roundNum, 1);
 H        = cell(roundNum, 1);
@@ -40,9 +41,9 @@ end
 
 % Find the best score
 [~, best]  = max(score);
-H          = H{best};
 ok         = ok{best};
 inlier_ind = find(ok)';
+H          = est_homography(x1(ok),y1(ok),x2(ok),y2(ok));
 
 % Plot the verbose details
 if ~verbose
@@ -53,7 +54,6 @@ dh1 = max(size(im2,1)-size(im1,1),0);
 dh2 = max(size(im1,1)-size(im2,1),0);
 
 h = figure(1); 
-clf;
 
 % Original Matches
 subplot(2,1,1);
