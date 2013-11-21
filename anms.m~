@@ -19,7 +19,7 @@ cornerIdx   = find(cimg);
 [y, x]      = ind2sub(size(cimg), cornerIdx);
 cornerNum   = size(y, 1);
 
-% Loop to find maximum radius "if" is faster than "min"
+% Loop to find maximum radius
 radius = Inf(cornerNum, 1);
 for i = 1 : cornerNum
    for j = 1 : cornerNum

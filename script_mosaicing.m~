@@ -33,7 +33,7 @@ if ~exist(inputFile, 'file')
         images{i} = imread(imgInfo(i).name);
         images{i} = imresize(images{i}, 1/7);
 %         images{i} = imrotate(images{i}, -90);
-        images{i} = flipdim(images{i}, 2); % Only needed for the images sources provided here
+        images{i} = flipdim(images{i}, 2);
         images{i} = flipdim(images{i}, 1);
     end
     cd(scriptDir);
